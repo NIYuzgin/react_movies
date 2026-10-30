@@ -1,12 +1,31 @@
 import './Main.css';
+import React from "react";
+import MovieList from "../components/MovieList";
 
-function Main()
+class Main extends React.Component
 {
-    return (
-        <div className="main">
+    state =
+        {
+            movies:[]
+        }
 
-        </div>
-    )
+    componentDidMount()
+    { 
+    fetch('http://www.omdbapi.com/?s=Terminator&apikey=4ed5c14e')
+        .then(response => response.json())
+        .then(data => this.setState({ movies: data.Search }));
+    }
+
+    render()
+    { 
+        return (
+            <div className="main">
+                {
+                    <MovieList movies={this.state.movies } />
+                }
+            </div>
+        )
+    }
 }
 export default Main;
 
