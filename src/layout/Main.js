@@ -8,26 +8,29 @@ class Main extends React.Component
 {
     state =
         {
-            movies:[]
+            movies: [],
+            count: 0
         }
 
     componentDidMount()
     { 
-    fetch('http://www.omdbapi.com/?s=Terminator&apikey=4ed5c14e')
+        this.searchMovie("Terminator");
+    /*fetch('http://www.omdbapi.com/?s=Terminator&apikey=4ed5c14e')
         .then(response => response.json())
-        .then(data => this.setState({ movies: data.Search }));
+        .then(data => this.setState({ movies: data.Search }));*/
     }
 
-    searchMovie = (str, type = 'all') =>
+    searchMovie = (str, type = 'all', page=1) =>
     {
-        let search_string = `http://www.omdbapi.com/?s=${str}${type !== 'all' ? `&type=${type}` : ''}&apikey=4ed5c14e`;
+        let search_string = `http://www.omdbapi.com/?s=${str}${type !== 'all' ? `&type=${type}` : ''}&page=${page}&apikey=4ed5c14e`;
         console.log(search_string);
         fetch
             (
                 search_string
             )
             .then(response => response.json())
-            .then(data => this.setState({ movies: data.Search }));
+            .then(data => this.setState({ movies: data.Search, count:data.totalResults }));
+           // .then(data => this.setState({ movies: data.Search }));
 
     }
 
@@ -35,7 +38,7 @@ class Main extends React.Component
     { 
         return (
             <div className="main">
-                <Search searchMovie={ this.searchMovie} />
+                <Search searchMovie={this.searchMovie} totalCount={this.state.count} />
                 {
                     this.state.movies == null ? <h1>Nothing</h1> :
                     this.state.movies.length == 0 ? <Preloader /> :

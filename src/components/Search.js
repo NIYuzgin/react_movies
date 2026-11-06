@@ -5,14 +5,15 @@ class Search extends React.Component
 {
     state =
         {
-            search:""
+            search: "",
+            type: "all",
+            page: 1
         }
     handleKey = (event) =>
     {
         if (event.key === 'Enter')
         {
-
-            this.props.searchMovie(this.state.type);
+            this.props.searchMovie(this.state.search, this.state.type);
         }
     }
     handleFilter = (event) =>
@@ -21,12 +22,39 @@ class Search extends React.Component
         (
             () => ({ type:     event.target.dataset.type}),
             () => ({ search:   this.props.searchMovie(this.state.search, this.state.type) })
-
         )
+    }
+
+    prevPage = () =>
+    {
+        this.setState
+            (
+                () => (this.state.page > 1 ? { page: this.state.page - 1 } : { page: 1 }),
+                () => { this.props.searchMovie(this.state.search, this.state.type, this.state.page) }
+            )
+    }
+
+    nextPage = () =>
+    {
+        this.setState
+            (
+                () => ({ page: this.state.page + 1 }),
+                () => { this.props.searchMovie(this.state.search, this.state.type, this.state.page) }
+            )
     }
 
     render()
     {
+        let itemsPerPage = 10;
+        let totalPages = Math.ceil(this.props.totalCount / itemsPerPage);
+        //floor - пол
+        //ceiling - потолок
+
+        let number = [];
+        for (let i = 0; i < totalPages; i++)
+            number.push(i+1);
+
+
         return (
             <>
                 <div className="search">
@@ -78,6 +106,31 @@ class Search extends React.Component
                         onChange={this.handleFilter }
                     />
                     <label htmlFor="radio-game" >Game</label>
+
+                </div>
+                <div className="pagination">
+                    <button className="btn" onClick={this.prevPage}>
+                        Prev
+                    </button>
+
+                    <div className="items">
+                        {
+                            number.slice(0, totalPages)
+                            .map
+                            (
+                                (element, index) =>
+                                (
+                                    <button className={ element == this.state.page ? "btn-current-page" : "" }>
+                                        { element }
+                                    </button>
+                                )
+                            )
+                        }
+
+                    </div>
+                    <button className="btn" onClick={this.nextPage}>
+                        Next
+                    </button>
 
                 </div>
             </>
