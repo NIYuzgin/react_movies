@@ -7,13 +7,22 @@ class Search extends React.Component
         {
             search: "",
             type: "all",
-            page: 1
+            page: 1,
+            //totalPages:1
         }
+    //componentDidMount()
+    //{
+    //    let itemsPerPage =10;
+    //    this.setState({ totalPages: Math.ceil(this.props.totalCount / itemsPerPage) });
+
+    //}
+
     handleKey = (event) =>
     {
         if (event.key === 'Enter')
         {
             this.props.searchMovie(this.state.search, this.state.type);
+            this.setState({ page: 1 });
         }
     }
     handleFilter = (event) =>
@@ -21,7 +30,8 @@ class Search extends React.Component
         this.setState
         (
             () => ({ type:     event.target.dataset.type}),
-            () => ({ search:   this.props.searchMovie(this.state.search, this.state.type) })
+            () => ({ search: this.props.searchMovie(this.state.search, this.state.type) })
+            //() => ({page:1})
         )
     }
 
@@ -43,10 +53,20 @@ class Search extends React.Component
             )
     }
 
+    setPage = (pageNumber) =>
+    {
+        this.setState
+            (
+                () => ({ page: pageNumber }),
+                () => { this.props.searchMovie(this.state.search, this.state.type, this.state.page) }
+            )
+    }
+
     render()
     {
         let itemsPerPage = 10;
         let totalPages = Math.ceil(this.props.totalCount / itemsPerPage);
+        //this.setState({ totalPages: Math.ceil(this.props.totalCount / itemsPerPage) })
         //floor - пол
         //ceiling - потолок
 
@@ -68,6 +88,7 @@ class Search extends React.Component
                         onClick=
                         {
                             () => this.props.searchMovie(this.state.search, this.state.type)
+                    //this.setState({page:1 })
                         }
                     >
                         &#128269;
@@ -120,7 +141,9 @@ class Search extends React.Component
                             (
                                 (element, index) =>
                                 (
-                                    <button className={ element == this.state.page ? "btn-current-page" : "" }>
+                                    <button className={element == this.state.page ? "btn-current-page" : ""}
+                                        onClick={()=>(this.setPage(element))}
+                                    >
                                         { element }
                                     </button>
                                 )
